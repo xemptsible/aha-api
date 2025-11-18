@@ -6,14 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.db import init_db
 from router.main import api_router
 
-from pydantic_settings import BaseSettings
-
-
-class Settings(BaseSettings):
-    db_url: str = "postgresql://bcdbhwin:ysteacbxxvemmivwbqiz@alpha.india.mkdb.sh:5432/kpbtibia"
-
-
-settings = Settings()
 
 origins = ["*"]
 

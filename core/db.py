@@ -5,9 +5,19 @@ from pydantic import PostgresDsn
 from sqlalchemy import text
 from sqlmodel import Session, SQLModel, create_engine, select
 
-from main import settings
 
 from .models import Author, Resource, Tag
+
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    db_url: str = (
+        "postgresql://bcdbhwin:ysteacbxxvemmivwbqiz@alpha.india.mkdb.sh:5432/kpbtibia"
+    )
+
+
+settings = Settings()
 
 # "postgresql://postgres:1@localhost:5433/postgres"
 postgres_url = PostgresDsn.build(
