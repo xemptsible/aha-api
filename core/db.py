@@ -5,6 +5,8 @@ from pydantic import PostgresDsn
 from sqlalchemy import text
 from sqlmodel import Session, SQLModel, create_engine, select
 
+from main import settings
+
 from .models import Author, Resource, Tag
 
 # "postgresql://postgres:1@localhost:5433/postgres"
@@ -18,7 +20,7 @@ postgres_url = PostgresDsn.build(
 )
 
 
-engine = create_engine(url=str(postgres_url), echo=False)
+engine = create_engine(url=settings.db_url, echo=False)
 
 
 def create_db_and_tables():
