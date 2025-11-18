@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 from sqlmodel import select
 
-from ..core.db import SessionDep
-from ..core.models import Tag, TagsPublic
+from core.db import SessionDep
+from core.models import Tag, TagsPublic
 
 router = APIRouter(
     prefix="/tags",

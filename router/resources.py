@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 from sqlmodel import or_, select
 
-from ..core.db import SessionDep
-from ..core.models import (
+from core.db import SessionDep
+from core.models import (
     Author,
     Resource,
     ResourceAuthorLink,
