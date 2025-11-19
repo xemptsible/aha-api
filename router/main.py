@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from router import item, resources, authors, tags
+from . import item, resources, authors, tags
 
 api_router = APIRouter()
 

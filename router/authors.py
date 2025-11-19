@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
 from sqlmodel import select
 
-from core.db import SessionDep
-from core.models import Author, AuthorsPublic
+from ..core.db import SessionDep
+from ..core.models import Author, AuthorsPublic
 
 router = APIRouter(
     prefix="/authors",

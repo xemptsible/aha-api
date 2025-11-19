@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.db import init_db
-from router.main import api_router
+from .core.db import init_db
+from .router.main import api_router
 
 
 origins = ["*"]
