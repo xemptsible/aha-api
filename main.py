@@ -7,7 +7,7 @@ from .core.db import init_db
 from .router.main import api_router
 
 
-origins = ["*"]
+origins = ["http://localhost:3000, https://aha-vault.vercel.app"]
 
 
 @asynccontextmanager
@@ -21,10 +21,8 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
     allow_origins=origins,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET"],
 )
 
 

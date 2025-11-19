@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends
@@ -8,16 +9,19 @@ from sqlmodel import Session, SQLModel, create_engine, select
 
 from .models import Author, Resource, Tag
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    db_url: str = (
-        "postgresql://bcdbhwin:ysteacbxxvemmivwbqiz@alpha.india.mkdb.sh:5432/kpbtibia"
-    )
+    db_url: str
+
+    model_config = SettingsConfigDict(env_file=".env")
 
 
-settings = Settings()
+@lru_cache
+def get_settings():
+    return Settings()  # type: ignore
+
 
 # "postgresql://postgres:1@localhost:5433/postgres"
 postgres_url = PostgresDsn.build(
@@ -30,7 +34,7 @@ postgres_url = PostgresDsn.build(
 )
 
 
-engine = create_engine(url=settings.db_url, echo=False)
+engine = create_engine(url=get_settings().db_url, echo=False)
 
 
 def create_db_and_tables():
