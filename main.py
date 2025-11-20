@@ -7,7 +7,11 @@ from .core.db import init_db
 from .router.main import api_router
 
 
-origins = ["http://localhost:3000, https://aha-vault.vercel.app"]
+origins = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://aha-vault.vercel.app",
+]
 
 
 @asynccontextmanager
