@@ -74,20 +74,22 @@ async def read_resources(
             if resource.image.url.find(
                 "imgur"
             ) != -1 and not resource.image.url.endswith(".jpeg"):
-                resource.image.url = resource.image.url.replace(".jpg", "m.jpeg")
+                resource.image.url = resource.image.url.replace(".jpg", "t.jpeg")
             elif resource.image.url.find(
                 "imgur"
             ) != -1 and not resource.image.url.endswith(".png"):
-                resource.image.url = resource.image.url.replace(".png", "m.png")
+                resource.image.url = resource.image.url.replace(".png", "t.png")
             else:
                 if image_format in ("png"):
+                    print("well that happened")
                     # Max compression and adaptive filter
                     resource.image.url = (
-                        f"http://wsrv.nl/?url={resource.image.url}&output=webp"
+                        f"http://wsrv.nl/?url={resource.image.url}&output=webp&q=1"
                     )
                 elif image_format in ("jpeg", "jpg", "webp"):
+                    print("well that happened 2")
                     resource.image.url = (
-                        f"http://wsrv.nl/?url={resource.image.url}&q=40"
+                        f"http://wsrv.nl/?url={resource.image.url}&q=1"
                     )
 
     return {"data": data, "count": len(data)}
