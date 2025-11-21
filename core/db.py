@@ -14,6 +14,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     db_url: str
+    dev_db_url: str
+    current_env: str
 
     model_config = SettingsConfigDict(env_file=".env")
 
@@ -21,6 +23,13 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings():
     return Settings()  # type: ignore
+
+
+def get_db():
+    if get_settings().current_env == "dev":
+        return Settings().dev_db_url  # type: ignore
+    
+    return Settings().db_url  # type: ignore
 
 
 # "postgresql://postgres:1@localhost:5433/postgres"
@@ -34,7 +43,7 @@ postgres_url = PostgresDsn.build(
 )
 
 
-engine = create_engine(url=get_settings().db_url, echo=False)
+engine = create_engine(url=get_db(), echo=False)
 
 
 def create_db_and_tables():
