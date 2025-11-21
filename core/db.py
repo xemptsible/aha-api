@@ -2,21 +2,15 @@ from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends
-from pydantic import PostgresDsn
-from sqlalchemy import text
-from sqlmodel import Session, SQLModel, create_engine, select
-
-
-from .models import Author, Resource, Tag
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlmodel import Session, SQLModel, create_engine, select, text
+
+from .models import Author, Image, Resource, Tag
 
 
 class Settings(BaseSettings):
     db_url: str
-    dev_db_url: str
-    current_env: str
-
+    
     model_config = SettingsConfigDict(env_file=".env")
 
 
@@ -25,25 +19,7 @@ def get_settings():
     return Settings()  # type: ignore
 
 
-def get_db():
-    if get_settings().current_env == "dev":
-        return Settings().dev_db_url  # type: ignore
-    
-    return Settings().db_url  # type: ignore
-
-
-# "postgresql://postgres:1@localhost:5433/postgres"
-postgres_url = PostgresDsn.build(
-    scheme="postgresql",
-    username="postgres",
-    password="1",
-    host="localhost",
-    port=5433,
-    path="postgres",
-)
-
-
-engine = create_engine(url=get_db(), echo=False)
+engine = create_engine(url=get_settings().db_url, echo=False)
 
 
 def create_db_and_tables():
@@ -61,6 +37,7 @@ def init_db():
     try:
         with Session(engine) as session:
             session.exec(select(text("1")))
+
             print("Database is awake.")
 
             create_db_and_tables()
@@ -71,6 +48,29 @@ def init_db():
 
 
 def create_test_data():
+    images = [
+        Image(
+            name="An image",
+            url="https://static.wikitide.net/bluearchivewiki/3/38/Lobby_Banner_20251112_01.png",
+            alt_text="subie",
+        ),
+        Image(
+            name="An image",
+            url="https://static.wikitide.net/bluearchivewiki/c/ce/Lobby_Banner_20240904_01.png",
+            alt_text="ui",
+        ),
+        Image(
+            name="An image",
+            url="https://static.wikitide.net/bluearchivewiki/a/a7/Lobby_Banner_20220907_01.png",
+            alt_text="hina",
+        ),
+        Image(
+            name="An image",
+            url="https://i.imgur.com/8Iv7PhJ.jpg",
+            alt_text="yesod",
+        ),
+    ]
+
     tags = [
         Tag(name="EN"),
         Tag(name="CN"),
@@ -86,24 +86,28 @@ def create_test_data():
             description="Guide",
             url="https://hina.loves.midokuni.com/",
             tags=[tags[0], tags[1]],
+            image=images[0],
         ),
         Resource(
             title="Joexyz",
             description="Guide",
             url="https://hina.loves.midokuni.com/",
             tags=[tags[0], tags[1], tags[4]],
+            image=images[1],
         ),
         Resource(
             title="Shared guide",
             description="Guide",
             url="https://hina.loves.midokuni.com/",
             tags=[tags[0], tags[1], tags[3]],
+            image=images[2],
         ),
         Resource(
             title="\u308f\u305f\u3057\u548c\u5c0f\u5e02",
             description="Guide",
             url="https://hina.loves.midokuni.com/",
             tags=[tags[0], tags[2], tags[4]],
+            image=images[3],
         ),
     ]
 
@@ -136,6 +140,9 @@ def create_test_data():
 
             for author in authors:
                 session.add(author)
+
+            for image in images:
+                session.add(image)
 
             for resource in resources:
                 session.add(resource)

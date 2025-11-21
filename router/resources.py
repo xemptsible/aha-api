@@ -1,3 +1,4 @@
+import mimetypes
 from typing import Annotated
 
 from fastapi import APIRouter, Query
@@ -8,6 +9,7 @@ from ..core.models import (
     Author,
     Resource,
     ResourceAuthorLink,
+    ResourceCreate,
     ResourceTagLink,
     ResourcesWithAuthorsAndTags,
     Tag,
@@ -62,4 +64,35 @@ async def read_resources(
     if len(author) == 0 and len(tag) == 0:
         data = session.exec(select(Resource).offset(offset).limit(limit)).all()
 
+    for resource in data:
+        if resource.image and resource.image.url:
+            mime_type = mimetypes.guess_type(resource.image.url)[0] or ""
+            image_format = mime_type[6::]
+
+            # Skip converting Imgur link. See https://github.com/weserv/images/issues/319
+            # Use 'm' for medium-size Imgur images. See https://thomas.vanhoutte.be/miniblog/imgur-thumbnail-trick/
+            if resource.image.url.find(
+                "imgur"
+            ) != -1 and not resource.image.url.endswith(".jpeg"):
+                resource.image.url = resource.image.url.replace(".jpg", "m.jpeg")
+            elif resource.image.url.find(
+                "imgur"
+            ) != -1 and not resource.image.url.endswith(".png"):
+                resource.image.url = resource.image.url.replace(".png", "m.png")
+            else:
+                if image_format in ("png"):
+                    # Max compression and adaptive filter
+                    resource.image.url = (
+                        f"http://wsrv.nl/?url={resource.image.url}&output=webp"
+                    )
+                elif image_format in ("jpeg", "jpg", "webp"):
+                    resource.image.url = (
+                        f"http://wsrv.nl/?url={resource.image.url}&q=40"
+                    )
+
     return {"data": data, "count": len(data)}
+
+
+@router.post("/", response_model=ResourcesWithAuthorsAndTags)
+async def create_resources(session: SessionDep, resource: ResourceCreate):
+    pass

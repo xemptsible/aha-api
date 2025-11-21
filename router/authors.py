@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter
 from sqlmodel import select
 
 from ..core.db import SessionDep
@@ -12,9 +12,6 @@ router = APIRouter(
 
 
 @router.get("/", response_model=AuthorsPublic)
-async def read_resources(session: SessionDep):
+async def read_authors(session: SessionDep):
     data = session.exec(select(Author)).all()
     return {"data": data, "count": len(data)}
-
-
-# @router.get("/", response_model=)

@@ -12,7 +12,7 @@ router = APIRouter(
 
 
 @router.get("/", response_model=TagsPublic)
-async def read_resources(session: SessionDep):
+async def read_tags(session: SessionDep):
     data = session.exec(select(Tag)).all()
 
     return {"data": data, "count": len(data)}

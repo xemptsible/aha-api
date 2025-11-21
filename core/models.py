@@ -18,15 +18,22 @@ class ResourceAuthorLink(SQLModel, table=True):
 class ImageBase(SQLModel):
     name: str
     url: str
-    alt_image: str
+    alt_text: str
 
 
 class ImagePublic(ImageBase):
     id: int
 
 
-class ImageCreate(ImageBase):
-    pass
+class ImagesPublic(BaseModel):
+    data: list["ImagePublic"]
+    count: int
+
+
+class ImageCreate(BaseModel):
+    name: str | None = None
+    url: str | None = None
+    alt_text: str | None = None
 
 
 class ImageUpdate(BaseModel):
@@ -37,7 +44,7 @@ class ImageUpdate(BaseModel):
 class Image(ImageBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    resource: Optional["Resource"] = Relationship(
+    resource_thumbnail: Optional["Resource"] = Relationship(
         back_populates="image", sa_relationship_kwargs={"uselist": False}
     )
 
@@ -49,7 +56,7 @@ class ResourceBase(SQLModel):
 
 
 class ResourceCreate(ResourceBase):
-    pass
+    image_id: int | None = None
 
 
 class ResourceUpdate(BaseModel):
@@ -79,7 +86,7 @@ class Resource(ResourceBase, table=True):
         back_populates="related_resources", link_model=ResourceTagLink
     )
     image: Optional["Image"] = Relationship(
-        back_populates="resource", sa_relationship_kwargs={"uselist": False}
+        back_populates="resource_thumbnail", sa_relationship_kwargs={"uselist": False}
     )
 
 
@@ -87,7 +94,7 @@ class ResourceWithAuthorsAndTags(ResourceBase):
     id: int
     authors: list["AuthorPublic"] = []
     tags: list["TagPublic"] = []
-    image: list["ImagePublic"] | None = None
+    image: ImagePublic | None = None
 
 
 class ResourcesWithAuthorsAndTags(BaseModel):
