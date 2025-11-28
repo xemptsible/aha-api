@@ -10,6 +10,7 @@ from ..core.models import (
     Resource,
     ResourceAuthorLink,
     ResourceCreate,
+    ResourceWithAuthorsAndTags,
     ResourcesWithAuthorsAndTags,
     ResourceTagLink,
     Tag,
@@ -101,6 +102,12 @@ async def read_resources(
     }
 
 
-@router.post("/", response_model=ResourcesWithAuthorsAndTags)
+@router.post("/", response_model=ResourceWithAuthorsAndTags)
 async def create_resources(session: SessionDep, resource: ResourceCreate):
-    pass
+    new_resource = Resource.model_validate(resource)
+
+    session.add(new_resource)
+    session.commit()
+    session.refresh(new_resource)
+
+    return new_resource

@@ -116,6 +116,7 @@ class TagUpdate(BaseModel):
 
 class TagPublic(TagBase):
     id: int
+    related_resources: list["ResourcePublic"] = []
 
 
 class TagsPublic(BaseModel):
@@ -138,6 +139,7 @@ class AuthorBase(SQLModel):
 
 class AuthorPublic(AuthorBase):
     id: int
+    credited_resources: list["Resource"] = []
 
 
 class AuthorsPublic(BaseModel):
