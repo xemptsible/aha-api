@@ -89,11 +89,11 @@ async def read_resources(
                     if image_format in ("png"):
                         # Max compression and adaptive filter
                         resource.image.url = (
-                            f"http://wsrv.nl/?url={resource.image.url}&output=webp&q=1"
+                            f"https://wsrv.nl/?url={resource.image.url}&output=webp&q=1"
                         )
                     elif image_format in ("jpeg", "jpg", "webp"):
                         resource.image.url = (
-                            f"http://wsrv.nl/?url={resource.image.url}&q=1"
+                            f"https://wsrv.nl/?url={resource.image.url}&q=1"
                         )
 
     return {
